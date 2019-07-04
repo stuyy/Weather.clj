@@ -1,9 +1,10 @@
 (ns weather.main
   (:require [clj-http.client :as client]))
 
-(def base-url "https://api.openweathermap.org/data/2.5/forecast?q=London,us&appid=")
+(def base-city "london,uk")
+(def base-url "https://api.openweathermap.org/data/2.5/forecast?q=")
 (def menu [
-  '("current" "city-name" "gets the current forecast for given city")
+  '("weather" "city-name" "gets the current forecast for given city")
   '("forecast" "city-name" "gets the forecast for given city")])
 
 (defn validate-key [url]
@@ -24,7 +25,15 @@
   (display-menu) ; display menu for user.
   (println "Enter a command")
   (loop [cmd (read-line)]
-    (if (= cmd "exit") (println "Goodbye!") (do (println "Enter a command") (recur (read-line))))))
+    (if (= cmd "exit") (println "Goodbye!") 
+      (do
+        (let [cmd-args (list cmd)]
+          (println cmd-args)
+          (cond
+            (= (first cmd-args) "weather") (println "Making weather call!")
+            (= (first cmd-args) "forecast") (println "Making forecast call!")))
+          (println "Enter a command")
+          (recur (read-line)))    )))
 
 (defn -main [& args]
   ; make http get request to validate their key.
@@ -33,12 +42,11 @@
     (if (= api-key "exit") 
       (println "Goodbye!")
       (do
-        (let [res (validate-key (str base-url api-key))]
+        (let [res (validate-key (str base-url base-city "&appid=" api-key))]
           (if (not= res nil) 
             (do
               (println "Valid API KEY!")
               (commands))
             (do 
               (println "Invalid API Key. Try again?") 
-              (recur (read-line)))
-))))))
+              (recur (read-line)))))))))
