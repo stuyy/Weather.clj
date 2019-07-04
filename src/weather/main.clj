@@ -8,7 +8,6 @@
     (if (= api-key "exit") 
       (println "Goodbye!")
       (do 
-        
         (let [res (validate-key (str base-forecast base-city "&appid=" api-key))]
         (if (not= res nil) 
           (do 
