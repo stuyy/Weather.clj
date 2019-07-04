@@ -22,7 +22,14 @@
   (loop [m menu]
     (if (empty? m) nil (do (println (first m)) (recur (rest m))))))
 
-(defn commands []
+(defn get-weather [city key]
+  (try
+    (let [res (client/get (str base-url (str/join " " city) "&appid=" key))]
+      (println (:body res))
+    )
+  (catch Exception err (println (.getMessage err))))
+)
+(defn commands [key]
   (display-menu) ; display menu for user.
   (println "Enter a command")
   (loop [cmd (read-line)]
@@ -31,7 +38,7 @@
         (let [cmd-args (str/split cmd #" ")]
           (println cmd-args)
           (cond
-            (= (first cmd-args) "weather") (println "Making weather call!")
+            (= (first cmd-args) "weather") (get-weather (rest cmd-args) key)
             (= (first cmd-args) "forecast") (println "Making forecast call!")))
         (println "Enter a command")
         (recur (read-line))))))

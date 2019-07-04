@@ -12,7 +12,7 @@
           (if (not= res nil) 
             (do
               (println "Valid API KEY!")
-              (commands))
+              (commands api-key))
             (do 
               (println "Invalid API Key. Try again?") 
               (recur (read-line)))))))))
